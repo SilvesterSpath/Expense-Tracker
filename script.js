@@ -6,6 +6,9 @@ const text = document.getElementById('text');
 const number = document.getElementById('number');
 const amount = document.getElementById('amount');
 const form = document.getElementById('form');
+const deleteBtn = document.querySelectorAll('.delete-btn');
+
+console.log(deleteBtn);
 
 const dummyTransactions = [
   { id: 1, text: 'Flower', amount: -20 },
@@ -19,7 +22,7 @@ let transactions = dummyTransactions;
 // Add transaction
 function addTransaction(e) {
   e.preventDefault();
-  const newTransaction = {};
+  /*   const newTransaction = {};
   newTransaction['text'] = form.text.value;
   newTransaction.amount = Number(form.amount.value);
   const randomId = Math.floor(Math.random() * 101);
@@ -30,7 +33,27 @@ function addTransaction(e) {
   }
   transactions.push(newTransaction);
   console.log(transactions);
-  init();
+  init(); */
+
+  if (text.value.trim() === '' || amount.value.trim() === '') {
+    alert('Please add a text and amount!');
+  } else {
+    const newTransaction = {
+      id: genId(),
+      text: text.value,
+      amount: Number(amount.value),
+    };
+    transactions.push(newTransaction);
+    addTransactionToDOM(newTransaction);
+    updateValues();
+    text.value = '';
+    amount.value = '';
+  }
+}
+
+// Generate random id
+function genId() {
+  return Math.floor(Math.random() * 10100);
 }
 
 // Add to transactions to DOM
@@ -45,7 +68,9 @@ function addTransactionToDOM(transaction) {
     transaction.amount < 0
       ? Math.abs(transaction.amount).toFixed(2)
       : transaction.amount.toFixed(2)
-  }</span><button class="delete-btn">x</button>`;
+  }</span><button class="delete-btn" onClick="removeTransaction(${
+    transaction.id
+  })">x</button>`;
 
   list.appendChild(item);
 }
@@ -53,15 +78,15 @@ function addTransactionToDOM(transaction) {
 // Update the balance
 function updateValues() {
   const amounts = transactions.map((i) => i.amount);
-  const total = amounts.reduce((a, i) => a + i).toFixed(2);
+  const total = amounts.reduce((a, i) => a + i, 0).toFixed(2);
   balance.innerHTML = `$${total}`;
   /*   let income = 0;
   let expence = 0;
   amounts.map((i) => (i < 0 ? (expence += Math.abs(i)) : (income += i))); */
-  const expence = amounts.filter((i) => i < 0).reduce((a, b) => a + b);
+  const expence = amounts.filter((i) => i < 0).reduce((a, b) => a + b, 0);
   const income = amounts
     .filter((i) => i > 0)
-    .reduce((a, b) => a + b)
+    .reduce((a, b) => a + b, 0)
     .toFixed(2);
   money_minus.innerHTML = `-$${Math.abs(expence).toFixed(2)}`;
   money_plus.innerHTML = `+$${income}`;
@@ -78,6 +103,12 @@ function updateValues() {
   money_minus.innerHTML = `-$${expense}.0`;
   money_plus.innerHTML = `+$${income}.0`;
 } */
+
+// Delete element
+function removeTransaction(id) {
+  transactions = transactions.filter((i) => i.id !== id);
+  init();
+}
 
 // Init app
 function init() {
