@@ -5,6 +5,7 @@ const list = document.getElementById('list');
 const text = document.getElementById('text');
 const number = document.getElementById('number');
 const amount = document.getElementById('amount');
+const form = document.getElementById('form');
 
 const dummyTransactions = [
   { id: 1, text: 'Flower', amount: -20 },
@@ -14,6 +15,23 @@ const dummyTransactions = [
 ];
 
 let transactions = dummyTransactions;
+
+// Add transaction
+function addTransaction(e) {
+  e.preventDefault();
+  const newTransaction = {};
+  newTransaction['text'] = form.text.value;
+  newTransaction.amount = Number(form.amount.value);
+  const randomId = Math.floor(Math.random() * 101);
+  if (!(randomId in dummyTransactions)) {
+    newTransaction.id = randomId;
+  } else {
+    newTransaction.id = Math.floor(Math.random() * 201) + 101;
+  }
+  transactions.push(newTransaction);
+  console.log(transactions);
+  init();
+}
 
 // Add to transactions to DOM
 function addTransactionToDOM(transaction) {
@@ -70,3 +88,5 @@ function init() {
 }
 
 init();
+
+form.addEventListener('submit', addTransaction);
