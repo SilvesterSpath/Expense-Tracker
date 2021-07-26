@@ -10,14 +10,19 @@ const deleteBtn = document.querySelectorAll('.delete-btn');
 
 console.log(deleteBtn);
 
-const dummyTransactions = [
+/* const dummyTransactions = [
   { id: 1, text: 'Flower', amount: -20 },
   { id: 2, text: 'Salary', amount: 300 },
   { id: 3, text: 'Book', amount: -10 },
   { id: 4, text: 'Camera', amount: 150 },
-];
+]; */
 
-let transactions = dummyTransactions;
+const localStorageTransactions = JSON.parse(
+  localStorage.getItem('transactions')
+);
+
+let transactions =
+  localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
 
 // Add transaction
 function addTransaction(e) {
@@ -46,6 +51,7 @@ function addTransaction(e) {
     transactions.push(newTransaction);
     addTransactionToDOM(newTransaction);
     updateValues();
+    updateLocalStorage();
     text.value = '';
     amount.value = '';
   }
@@ -107,7 +113,13 @@ function updateValues() {
 // Delete element
 function removeTransaction(id) {
   transactions = transactions.filter((i) => i.id !== id);
+  updateLocalStorage();
   init();
+}
+
+// UPdate local storage transactions
+function updateLocalStorage() {
+  localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
 // Init app
